@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>idoPlant - Plant Diagnosis & Nutrient Deficiency Detection</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            color: #333;
+            line-height: 1.6;
+            background-color: #fcfcf7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles - Solid Color */
+        header {
+            background-color: #1C3A29;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-family: 'Times New Roman', serif;
+            font-size: 28px;
+            font-weight: 400;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 300;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #a9d4c2;
+        }
+
+        /* Top Banner */
+        .top-banner {
+            background-color: #1C3A29;
+            color: white;
+            text-align: center;
+            padding: 8px 0;
+            margin-top: 60px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .top-banner p {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        .cta-button {
+            background-color: #558b7d;
+            color: white;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #3a5d4f;
+        }
+
+        /* Hero Section with Leaf Image */
+        .hero {
+            height: 80vh;
+            background-image: url('pexels-catiamatos-1072179.jpg');
+            background-size: cover;
+            background-position: top center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-cta {
+            background: linear-gradient(135deg, #1C3A29 0%, #f8f8f0 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .hero-cta svg {
+            margin-right: 8px;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Sections - More Minimalist */
+        .main-content {
+            padding: 60px 0;
+            background-color: #fff;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 300;
+            color: #2E6045;
+            margin-bottom: 40px;
+        }
+
+        /* Camera Card */
+        .camera-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            max-width: 500px;
+            margin: 0 auto 60px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .camera-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-left: 3px solid #558b7d;
+        }
+
+        .camera-icon {
+            font-size: 48px;
+            color: #2E6045;
+            margin-bottom: 20px;
+        }
+
+        .camera-card h3 {
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 15px;
+            color: #2E6045;
+        }
+
+        .camera-card p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* Sustainability Section */
+        .sustainability {
+            background-color: #f5f7f5;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .sustainability-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .sustainability-info {
+            flex: 1;
+            padding: 0 20px;
+            min-width: 300px;
+        }
+
+        .sustainability-info h3 {
+            font-size: 28px;
+            font-weight: 400;
+            color: #2E6045;
+            margin-bottom: 20px;
+        }
+
+        .stat-highlight {
+            font-size: 36px;
+            font-weight: 700;
+            color: #558b7d;
+            margin-bottom: 15px;
+        }
+
+        .sustainability-image {
+            flex: 1;
+            min-width: 300px;
+            height: 300px;
+            background-image: url('/api/placeholder/600/400');
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+        }
+
+        /* Footer - Minimalist */
+        footer {
+            background-color: #0e2418;
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h4 {
+            font-size: 18px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            color: #a9d4c2;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-column ul li a:hover {
+            color: #558b7d;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            color: #a9a9a9;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+            }
+            
+            .hero-content h1 {
+                font-size: 36px;
+            }
+            
+            .sustainability-content {
+                flex-direction: column;
+            }
+            
+            .sustainability-image {
+                margin-top: 30px;
+                width: 100%;
+            }
+        }
+
+        /* Camera Modal Styles */
+        .camera-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .camera-modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #1C3A29;
+            color: white;
+        }
+
+        .camera-header h3 {
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .close-camera {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0 10px;
+        }
+
+        .camera-preview-container {
+            position: relative;
+            width: 100%;
+            background: #333;
+        }
+
+        #cameraView {
+            width: 100%;
+            display: block;
+        }
+
+        .camera-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background-color: #f5f7f5;
+        }
+
+        .camera-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .camera-button svg {
+            margin-right: 8px;
+        }
+
+        .primary {
+            background-color: #2E6045;
+            color: white;
+        }
+
+        .secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .camera-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .camera-status {
+            padding: 15px;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .capture-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #2E6045;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .flash {
+            animation: flash 0.5s;
+        }
+
+        @keyframes flash {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">idoPlant</div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Click picture</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Top Banner -->
+    <div class="top-banner">
+        <div class="container">
+            <p>Plant Diagnosis - Nutrient Deficiency Detection</p>
+            <button class="cta-button">the Green Line</button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Refined. Renewed Planet.</h1>
+            <button class="hero-cta">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                Click pictures of your leaves
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="main-content">
+        <div class="container">
+            <h2 class="section-title">Plant Health Analysis</h2>
+            
+            <!-- Camera Card -->
+            <div class="camera-card">
+                <div class="camera-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                </div>
+                <h3>Click Picture</h3>
+                <p>Take a photo of your plant's leaves to get an instant nutrient deficiency diagnosis</p>
+                <button class="cta-button">Open Camera</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sustainability Section -->
+    <section class="sustainability">
+        <div class="container">
+            <h2 class="section-title">Our Sustainability Commitment</h2>
+            <div class="sustainability-content">
+                <div class="sustainability-info">
+                    <div class="stat-highlight">95%</div>
+                    <h3>of our materials are organic or recycled</h3>
+                    <p>We're dedicated to reducing our environmental footprint through sustainable practices in every aspect of our operation, from materials sourcing to production methods.</p>
+                </div>
+                <div class="sustainability-image"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h4>About idoPlant</h4>
+                    <ul>
+                        <li><a href="#">Our Mission</a></li>
+                        <li><a href="#">Sustainability</a></li>
+                        <li><a href="#">Plant Research</a></li>
+                        <li><a href="#">Join Our Team</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Customer Support</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Troubleshooting</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Our Resources</h4>
+                    <ul>
+                        <li><a href="#">Plant Care Guides</a></li>
+                        <li><a href="#">Nutrient Database</a></li>
+                        <li><a href="#">Research Papers</a></li>
+                        <li><a href="#">Community Forum</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 idoPlant. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal for Camera Preview -->
+    <div id="cameraModal" class="camera-modal">
+        <div class="camera-modal-content">
+            <div class="camera-header">
+                <h3>Plant Diagnosis Camera</h3>
+                <button class="close-camera">&times;</button>
+            </div>
+            <div class="camera-preview-container">
+                <video id="cameraView" autoplay playsinline></video>
+                <canvas id="cameraCanvas" style="display:none;"></canvas>
+            </div>
+            <div class="camera-controls">
+                <button id="captureBtn" class="camera-button primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                </button>
+                <button id="retakeBtn" class="camera-button secondary" style="display:none;">
+                    Retake
+                </button>
+                <button id="submitBtn" class="camera-button primary" style="display:none;">
+                    Submit
+                </button>
+            </div>
+            <div id="cameraStatus" class="camera-status"></div>
+        </div>
+    </div>
+
+    <div id="outputResult" style="text-align:center; margin: 20px; font-size: 18px; color: #2E6045;"></div>
+
+    <script>
+        // Camera Module
+        const cameraModal = document.getElementById('cameraModal');
+        const cameraView = document.getElementById('cameraView');
+        const cameraCanvas = document.getElementById('cameraCanvas');
+        const captureBtn = document.getElementById('captureBtn');
+        const retakeBtn = document.getElementById('retakeBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const closeBtn = document.querySelector('.close-camera');
+        const statusDisplay = document.getElementById('cameraStatus');
+        
+        let stream = null;
+        let capturedImage = null;
+
+        // Open camera modal
+        async function openCamera() {
+            try {
+                statusDisplay.innerHTML = 'Initializing camera...';
+                cameraModal.style.display = 'flex';
+                
+                // Reset UI state
+                captureBtn.style.display = 'flex';
+                retakeBtn.style.display = 'none';
+                submitBtn.style.display = 'none';
+                cameraView.style.display = 'block';
+                
+                // Get camera stream
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
+                cameraView.srcObject = stream;
+                statusDisplay.innerHTML = 'Point the camera at your plant leaves';
+                
+            } catch (err) {
+                console.error("Camera error:", err);
+                statusDisplay.innerHTML = `
+                    <div style="color: #d32f2f;">
+                        <p>Could not access the camera.</p>
+                        <p>Please ensure you've granted camera permissions.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Close camera
+        function closeCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            cameraModal.style.display = 'none';
+            statusDisplay.innerHTML = '';
+        }
+
+        // Capture image
+        function captureImage() {
+            try {
+                // Set canvas dimensions
+                cameraCanvas.width = cameraView.videoWidth;
+                cameraCanvas.height = cameraView.videoHeight;
+                
+                // Draw image to canvas
+                const context = cameraCanvas.getContext('2d');
+                context.drawImage(cameraView, 0, 0, cameraCanvas.width, cameraCanvas.height);
+                
+                // Show capture effect
+                const flash = document.createElement('div');
+                flash.className = 'capture-indicator flash';
+                flash.innerHTML = '✓';
+                cameraView.parentNode.appendChild(flash);
+                
+                setTimeout(() => {
+                    flash.remove();
+                }, 500);
+                
+                // Update UI
+                captureBtn.style.display = 'none';
+                retakeBtn.style.display = 'flex';
+                submitBtn.style.display = 'flex';
+                statusDisplay.innerHTML = 'Review your photo';
+                
+            } catch (err) {
+                console.error("Capture error:", err);
+                statusDisplay.innerHTML = 'Error capturing image. Please try again.';
+            }
+        }
+
+        // Retake photo
+        function retakePhoto() {
+            captureBtn.style.display = 'flex';
+            retakeBtn.style.display = 'none';
+            submitBtn.style.display = 'none';
+            statusDisplay.innerHTML = 'Point the camera at your plant leaves';
+        }
+
+        // Submit photo for analysis
+        async function submitPhoto() {
+            try {
+                statusDisplay.innerHTML = 'Analyzing your plant...';
+                
+                // Convert canvas to blob
+                const blob = await new Promise((resolve) => {
+                    cameraCanvas.toBlob(resolve, 'image/jpeg', 0.9);
+                });
+                
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('image', blob, 'plant-image.jpg');
+                
+                // Send to API
+                const response = await fetch('http://172.20.203.1:5050/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Validate response
+                if (typeof data.predicted_class === 'undefined' || typeof data.confidence === 'undefined') {
+                    throw new Error('Invalid API response format');
+                }
+                
+                // Display results
+                showResults(data);
+                
+            } catch (error) {
+                console.error('Analysis error:', error);
+                statusDisplay.innerHTML = `
+                    <div style="color: #d32f2f;">
+                        <p>Error analyzing your plant.</p>
+                        <p>Please try again or contact support.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Show analysis results
+        function showResults(data) {
+            // Define your class labels (update these to match your model's classes)
+            const classLabels = {
+                0: 'Healthy',
+                1: 'Nitrogen Deficiency',
+                2: 'Phosphorus Deficiency',
+                3: 'Potassium Deficiency',
+                4: 'Calcium Deficiency',
+                5: 'Magnesium Deficiency',
+                6: 'Sulfur Deficiency',
+                7: 'Iron Deficiency',
+                8: 'Manganese Deficiency',
+            };
+
+            // Format results
+            const className = classLabels[data.predicted_class] || `Class ${data.predicted_class}`;
+            const confidencePercent = (data.confidence * 100).toFixed(2);
+            
+            // Display results
+            statusDisplay.innerHTML = `
+                <h3>Plant Health Analysis</h3>
+                <p><strong>Diagnosis:</strong> ${className}</p>
+                <p><strong>Confidence:</strong> ${confidencePercent}%</p>
+                <p><strong>Recommendation:</strong> ${getRecommendation(data.predicted_class)}</p>
+            `;
+        }
+
+        // Helper function to provide recommendations
+        function getRecommendation(classId) {
+            const recommendations = {
+                0: 'Your plant appears healthy. Maintain current care routine.',
+                1: 'Apply nitrogen-rich fertilizer. Consider compost or blood meal.',
+                2: 'Use phosphorus-rich fertilizer like bone meal or rock phosphate.',
+                3: 'Add potassium sources like wood ash or potassium sulfate.',
+                4: 'Apply calcium carbonate or gypsum to soil.',
+                5: 'Use Epsom salts (magnesium sulfate) as a supplement.',
+                6: 'Apply sulfur or sulfate-containing fertilizers.',
+                7: 'Use iron chelates or iron sulfate, especially in alkaline soils.',
+                8: 'Apply manganese sulfate or chelated manganese.',
+            };
+            return recommendations[classId] || 'Consult a plant specialist for specific recommendations.';
+        }
+
+        // Event listeners
+        document.querySelectorAll('.hero-cta, .cta-button').forEach(btn => {
+            btn.addEventListener('click', openCamera);
+        });
+
+        captureBtn.addEventListener('click', captureImage);
+        retakeBtn.addEventListener('click', retakePhoto);
+        submitBtn.addEventListener('click', submitPhoto);
+        closeBtn.addEventListener('click', closeCamera);
+    </script>
+</body>
+</html>
